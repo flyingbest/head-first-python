@@ -1,0 +1,61 @@
+import pickle
+from athletelist import AthleteList
+
+# two ways of import
+"""
+import <module>
+from <module> import <variable>or<function>
+"""
+
+def get_coach_data(filename):
+	try:
+		with open(filename) as f:
+			data = f.readline()
+		templ = data.strip().split(',')
+		return(AthleteList(templ.pop(0), templ.pop(0), templ))
+	except IOError as ioerr:
+		print('File error: ' + str(ioerr))
+		return(None)
+
+def put_to_store(files_list):
+	all_athletes = {}
+	for each_file in files_list:
+		ath = get_coach_data(each_file)
+		all_athletes[ath.name] = ath
+	try:
+		with open('athletes.pickle', 'wb') as athf:
+			pickle.dump(all_athletes, athf)
+	except IOError as ioerr:
+		print('File error(put_and_store): ' + str(ioerr))
+	return(all_athletes)
+
+def get_from_store():
+	all_athletes = {}
+	try:
+		with open('athletes.pickle', 'rb') as athf:
+			all_athletes = pickle.load(athf)
+	except IOError as ioerr:
+		print('File error(get_from_store): ' + str(ioerr))
+	return(all_athletes)
+
+#print(dir())
+
+the_files = ['sarah2.txt', 'james2.txt', 'mikey2.txt', 'julie2.txt']
+data = put_to_store(the_files)
+print(data)
+
+# At this point, the athletes.pickle file should appear in the same folder as your code and text files. Recall that this file is a binary file,
+# so trying to view it in IDLE or in your editer is not going to make much sense. To access the data, 
+# use the dictionary returned by the put_to_store() or get_from_store() functions.
+
+for each_athlete in data:
+	print(data[each_athlete].name + ' ' + data[each_athlete].dob)
+
+# Use the get_from_store() function to load the pickled data into another dictionary, then confirm that the result are as expected by repeating the code
+# to display each athlete's name and date of birth:
+
+data_copy = get_from_store()
+
+for each_athlete in data_copy:
+	print(data_copy[each_athlete].name + ' ' + data[each_athlete].dob)
+
